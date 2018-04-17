@@ -4,15 +4,25 @@
 
 void MeshQuad::clear()
 {
+    //à vérifier
+    m_points.clear();
+    m_quad_indices.clear();
+    //edges ?
 }
 
 int MeshQuad::add_vertex(const Vec3& P)
 {
+    m_points.push_back(P);
+    return (m_points.size() -1);
 }
 
 
 void MeshQuad::add_quad(int i1, int i2, int i3, int i4)
 {
+    m_quad_indices.push_back(i1);
+    m_quad_indices.push_back(i2);
+    m_quad_indices.push_back(i3);
+    m_quad_indices.push_back(i4);
 }
 
 void MeshQuad::convert_quads_to_tris(const std::vector<int>& quads, std::vector<int>& tris)
@@ -22,6 +32,17 @@ void MeshQuad::convert_quads_to_tris(const std::vector<int>& quads, std::vector<
 
 	// Pour chaque quad on genere 2 triangles
 	// Attention a repecter l'orientation des triangles
+
+    //tester multiple de 4 ?
+    for(int i=0; i<quads.size(); i+4) {
+        tris.push_back(quads[i]);
+        tris.push_back(quads[i+1]);
+        tris.push_back(quads[i+2]);
+
+        tris.push_back(quads[i]);
+        tris.push_back(quads[i+2]);
+        tris.push_back(quads[i+3]);
+    }
 
 }
 
@@ -33,6 +54,14 @@ void MeshQuad::convert_quads_to_edges(const std::vector<int>& quads, std::vector
 	// Mais chaque arete est commune a 2 quads voisins !
 	// Comment n'avoir qu'une seule fois chaque arete ?
 
+    //il suffit d'implémenter deux arêtes sur 4
+    for(int i=0; i<quads.size(); i+4) {
+        edges.push_back(quads[i+2]);
+        edges.push_back(quads[i+3]);
+
+        edges.push_back(quads[i]);
+        edges.push_back(quads[i+3]);
+    }
 }
 
 
