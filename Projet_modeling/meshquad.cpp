@@ -4,10 +4,8 @@
 
 void MeshQuad::clear()
 {
-    //à vérifier
     m_points.clear();
     m_quad_indices.clear();
-    //edges ?
 }
 
 int MeshQuad::add_vertex(const Vec3& P)
@@ -34,7 +32,7 @@ void MeshQuad::convert_quads_to_tris(const std::vector<int>& quads, std::vector<
 	// Attention a repecter l'orientation des triangles
 
     //tester multiple de 4 ?
-    for(int i=0; i<quads.size(); i+4) {
+    for(int i=0; i<quads.size(); i+=4) {
         tris.push_back(quads[i]);
         tris.push_back(quads[i+1]);
         tris.push_back(quads[i+2]);
@@ -54,21 +52,54 @@ void MeshQuad::convert_quads_to_edges(const std::vector<int>& quads, std::vector
 	// Mais chaque arete est commune a 2 quads voisins !
 	// Comment n'avoir qu'une seule fois chaque arete ?
 
-    //il suffit d'implémenter deux arêtes sur 4
-    for(int i=0; i<quads.size(); i+4) {
+    //ici : toutes les arêtes implémentées (donc présence de doubles)
+    for(int i=0; i<quads.size(); i+=4) {
+        edges.push_back(quads[i]);
+        edges.push_back(quads[i+1]);
+
+        edges.push_back(quads[i+1]);
+        edges.push_back(quads[i+2]);
+
         edges.push_back(quads[i+2]);
         edges.push_back(quads[i+3]);
 
-        edges.push_back(quads[i]);
         edges.push_back(quads[i+3]);
+        edges.push_back(quads[i]);
     }
 }
 
 
 void MeshQuad::bounding_sphere(Vec3& C, float& R)
 {
-	// C=
-	// R=
+    //pour la lisibilité
+    int x = 0;
+    int y = 1;
+    int z = 2;
+
+    int max_x = 0;
+    int max_y = 0;
+    int max_z = 0;
+    int max_r = 0;
+
+    for(int i=0; i<m_points.size(); i++) {
+        if(m_points[i][x] > max_x) {
+            max_x = m_points[i][x];
+        }
+
+        if(m_points[i][y] > max_y) {
+            max_y = m_points[i][y];
+        }
+
+        if(m_points[i][z] > max_z) {
+            max_z = m_points[i][z];
+        }
+    }
+
+    max_r = std::max(max_x, max_y);
+    max_r = std::max(max_z, max_r);
+
+    C = Vec3(max_x/2, max_y/2, max_z/2);
+    R = max_r;
 }
 
 
@@ -77,7 +108,32 @@ void MeshQuad::create_cube()
 	clear();
 	// ajouter 8 sommets (-1 +1)
 
+    //face du bas (sur le plan XZ)
+    int inf_g1 = add_vertex(Vec3(0, 0, 0));
+    int inf_d1 = add_vertex(Vec3(1, 0, 0));
+    int sup_g1 = add_vertex(Vec3(0, 0, 1));
+    int sup_d1 = add_vertex(Vec3(1, 0, 1));
+
+    //face du haut
+    int inf_g2 = add_vertex(Vec3(0, 1, 0));
+    int inf_d2 = add_vertex(Vec3(1, 1, 0));
+    int sup_g2 = add_vertex(Vec3(0, 1, 1));
+    int sup_d2 = add_vertex(Vec3(1, 1, 1));
+
 	// ajouter 6 faces (sens trigo)
+
+    //face du bas
+    add_quad(inf_g1, inf_d1, sup_d1, sup_g1);
+    //face de droite
+    add_quad(inf_d1, sup_d1, sup_d2, inf_d2);
+    //face du haut
+    add_quad(inf_g2, inf_d2, sup_d2, sup_g2);
+    //face de gauche
+    add_quad(inf_g1, sup_g1, sup_g2, inf_g2);
+    //face avant
+    add_quad(inf_g1, inf_d1, inf_d2, inf_g2);
+    //face arrière
+    add_quad(sup_g1, sup_d1, sup_d2, sup_g2);
 
 	gl_update();
 }
