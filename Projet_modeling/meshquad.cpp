@@ -106,34 +106,43 @@ void MeshQuad::bounding_sphere(Vec3& C, float& R)
 void MeshQuad::create_cube()
 {
 	clear();
+
 	// ajouter 8 sommets (-1 +1)
 
-    //face du bas (sur le plan XZ)
-    int inf_g1 = add_vertex(Vec3(0, 0, 0));
-    int inf_d1 = add_vertex(Vec3(1, 0, 0));
-    int sup_g1 = add_vertex(Vec3(0, 0, 1));
-    int sup_d1 = add_vertex(Vec3(1, 0, 1));
+    int axeY = add_vertex(Vec3(0, 5, 0));
+    int axeZ = add_vertex(Vec3(0, 0, 5));
+    int axeX = add_vertex(Vec3(5, 0, 0));
 
-    //face du haut
-    int inf_g2 = add_vertex(Vec3(0, 1, 0));
-    int inf_d2 = add_vertex(Vec3(1, 1, 0));
-    int sup_g2 = add_vertex(Vec3(0, 1, 1));
-    int sup_d2 = add_vertex(Vec3(1, 1, 1));
+    int p0 = add_vertex(Vec3(0, 0, 0));
+    int p1 = add_vertex(Vec3(1, 0, 0));
+    int p2 = add_vertex(Vec3(1, 0, 1));
+    int p3 = add_vertex(Vec3(0, 0, 1));
 
-	// ajouter 6 faces (sens trigo)
+    int ph0 = add_vertex(Vec3(0, 1, 0));
+    int ph1 = add_vertex(Vec3(1, 1, 0));
+    int ph2 = add_vertex(Vec3(1, 1, 1));
+    int ph3 = add_vertex(Vec3(0, 1, 1));
 
-    //face du bas
-    add_quad(inf_g1, inf_d1, sup_d1, sup_g1);
-    //face de droite
-    add_quad(inf_d1, sup_d1, sup_d2, inf_d2);
-    //face du haut
-    add_quad(inf_g2, inf_d2, sup_d2, sup_g2);
-    //face de gauche
-    add_quad(inf_g1, sup_g1, sup_g2, inf_g2);
-    //face avant
-    add_quad(inf_g1, inf_d1, inf_d2, inf_g2);
-    //face arrière
-    add_quad(sup_g1, sup_d1, sup_d2, sup_g2);
+
+    // ajouter 6 faces (sens trigo pour chacune) ??
+
+    //dessus et dessous
+    add_quad(p0, p1, p2, p3);
+    add_quad(ph3, ph2, ph1, ph0);
+
+    //avant et arrière
+    add_quad(p0, ph0, ph1, p1);
+    add_quad(p2, ph2, ph3, p3);
+
+    //gauche et droite
+    add_quad(p0, p3, ph3, ph0);
+    add_quad(ph1, ph2, p2, p1);
+
+    //repère
+    add_quad(p0, axeY, axeY, p0);
+    add_quad(p0, axeZ, axeZ, p0);
+    add_quad(p0, axeX, axeX, p0);
+
 
 	gl_update();
 }
