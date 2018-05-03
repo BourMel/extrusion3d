@@ -68,7 +68,7 @@ void MeshQuad::convert_quads_to_edges(const std::vector<int>& quads, std::vector
     }
 }
 
-
+//PAS TESTE
 void MeshQuad::bounding_sphere(Vec3& C, float& R)
 {
     //pour la lisibilité
@@ -102,7 +102,7 @@ void MeshQuad::bounding_sphere(Vec3& C, float& R)
     R = max_r;
 }
 
-
+//SENS TRIGO ?
 void MeshQuad::create_cube()
 {
 	clear();
@@ -122,7 +122,6 @@ void MeshQuad::create_cube()
     int ph1 = add_vertex(Vec3(1, 1, 0));
     int ph2 = add_vertex(Vec3(1, 1, 1));
     int ph3 = add_vertex(Vec3(0, 1, 1));
-
 
     // ajouter 6 faces (sens trigo pour chacune) ??
 
@@ -147,13 +146,14 @@ void MeshQuad::create_cube()
 	gl_update();
 }
 
+//PAS TESTE, C pas utilisé
 Vec3 MeshQuad::normal_of(const Vec3& A, const Vec3& B, const Vec3& C)
 {
 	// Attention a l'ordre des points !
 	// le produit vectoriel n'est pas commutatif U ^ V = - V ^ U
 	// ne pas oublier de normaliser le resultat.
 
-	return Vec3();
+    return Vec3(glm::normalize(glm::cross(A,B)));
 }
 
 
@@ -163,6 +163,10 @@ bool MeshQuad::is_points_in_quad(const Vec3& P, const Vec3& A, const Vec3& B, co
 
 	// P est-il au dessus des 4 plans contenant chacun la normale au quad et une arete AB/BC/CD/DA ?
 	// si oui il est dans le quad
+
+    //plan n°1
+
+
 
     return true;
 }
