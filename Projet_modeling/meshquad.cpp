@@ -146,7 +146,7 @@ void MeshQuad::create_cube()
 	gl_update();
 }
 
-//PAS TESTE, C pas utilisé
+//PAS TESTE, pas utilisé
 Vec3 MeshQuad::normal_of(const Vec3& A, const Vec3& B, const Vec3& C)
 {
 	// Attention a l'ordre des points !
@@ -156,7 +156,7 @@ Vec3 MeshQuad::normal_of(const Vec3& A, const Vec3& B, const Vec3& C)
     return Vec3(glm::normalize(glm::cross(A,B)));
 }
 
-
+//PAS TESTE, pas utilisé
 bool MeshQuad::is_points_in_quad(const Vec3& P, const Vec3& A, const Vec3& B, const Vec3& C, const Vec3& D)
 {
 	// On sait que P est dans le plan du quad.
@@ -164,9 +164,38 @@ bool MeshQuad::is_points_in_quad(const Vec3& P, const Vec3& A, const Vec3& B, co
 	// P est-il au dessus des 4 plans contenant chacun la normale au quad et une arete AB/BC/CD/DA ?
 	// si oui il est dans le quad
 
-    //plan n°1
+    int x = 0;
+    int y = 1;
+    int z = 2;
 
+    Vec3 AB = B-A;
+    Vec3 BC = C-B;
+    Vec3 CD = D-C;
+    Vec3 DA = A-D;
 
+    //plan n°1 : normale puis déterminant
+    Vec3 normale1 = glm::cross(AB,P);
+    int res1 = normale1[x]*P[x] + normale1[y]*P[y] + normale1[z]*P[z];
+
+    if(res1 < 0) return false;
+
+    //plan n°2
+    Vec3 normale2 = glm::cross(BC, P);
+    int res2 = normale2[x]*P[x] + normale2[y]*P[y] + normale2[z]*P[z];
+
+    if(res2 < 0) return false;
+
+    //plan n°3
+    Vec3 normale3 = glm::cross(CD, P);
+    int res3 = normale3[x]*P[x] + normale3[y]*P[y] + normale3[z]*P[z];
+
+    if(res3 < 0) return false;
+
+    //plan n°4
+    Vec3 normale4 = glm::cross(DA, P);
+    int res4 = normale4[x]*P[x] + normale4[y]*P[y] + normale4[z]*P[z];
+
+    if(res4 < 0) return false;
 
     return true;
 }
