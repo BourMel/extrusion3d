@@ -176,26 +176,28 @@ bool MeshQuad::is_points_in_quad(const Vec3& P, const Vec3& A, const Vec3& B, co
     Vec3 CD = D-C;
     Vec3 DA = A-D;
 
+    Vec3 normale = glm::cross(AB, BC);
+
     //plan n°1 : normale puis déterminant
-    Vec3 normale1 = glm::cross(AB,P);
+    Vec3 normale1 = glm::cross(AB, normale);
     int res1 = normale1[x]*P[x] + normale1[y]*P[y] + normale1[z]*P[z];
 
     if(res1 < 0) return false;
 
     //plan n°2
-    Vec3 normale2 = glm::cross(BC, P);
+    Vec3 normale2 = glm::cross(BC, normale);
     int res2 = normale2[x]*P[x] + normale2[y]*P[y] + normale2[z]*P[z];
 
     if(res2 < 0) return false;
 
     //plan n°3
-    Vec3 normale3 = glm::cross(CD, P);
+    Vec3 normale3 = glm::cross(CD, normale);
     int res3 = normale3[x]*P[x] + normale3[y]*P[y] + normale3[z]*P[z];
 
     if(res3 < 0) return false;
 
     //plan n°4
-    Vec3 normale4 = glm::cross(DA, P);
+    Vec3 normale4 = glm::cross(DA, normale);
     int res4 = normale4[x]*P[x] + normale4[y]*P[y] + normale4[z]*P[z];
 
     if(res4 < 0) return false;
