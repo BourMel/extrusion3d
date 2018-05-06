@@ -200,19 +200,54 @@ bool MeshQuad::is_points_in_quad(const Vec3& P, const Vec3& A, const Vec3& B, co
     return true;
 }
 
+//PAS TESTE
 bool MeshQuad::intersect_ray_quad(const Vec3& P, const Vec3& Dir, int q, Vec3& inter)
 {
-	// recuperation des indices de points
-	// recuperation des points
+    /**
+     * @brief calcul l'intersection entre un rayon et un quad
+     * @param P point de depart du rayon
+     * @param Dir direction du rayon
+     * @param q numero du quad
+     * @param inter intersection calculee [out]
+     * @return l'intersection est dans le quad
+     */
+
+    int x = 0;
+    int y = 1;
+    int z = 2;
+
+    // recuperation des indices de points
+    int i0 = m_quad_indices[q];
+    int i1 = m_quad_indices[q+1];
+    int i2 = m_quad_indices[q+2];
+    int i3 = m_quad_indices[q+3];
+    // recuperation des points
+    Vec3 p0 = m_points[i0];
+    Vec3 p1 = m_points[i1];
+    Vec3 p2 = m_points[i2];
+    Vec3 p3 = m_points[i3];
 
 	// calcul de l'equation du plan (N+d)
 
-    // calcul de l'intersection rayon plan
-	// I = P + alpha*Dir est dans le plan => calcul de alpha
+    //deux vecteurs directeurs du plan
+    Vec3 v = p1 - p0;
+    Vec3 u = p3 - p2;
+    //normale = leur produit vectoriel
+    Vec3 N = glm::cross(u, v);
+    //on calcule d en remplaçant x, y et z par les coordonnées de p0, qui appartient au plan
+    int d = N[x]*p0[x] + N[y]*p0[y] + N[z]*p0[z];
 
-	// alpha => calcul de I
+    // calcul de l'intersection rayon plan
+
+    // I = P + alpha*Dir est dans le plan => calcul de alpha
+    // on remplace x, y, z dans l'équation du plan par les coordonnées paramétriques du rayon, ce qui nous donne t
+    int t = -(N[x]*P[x] + N[y]+P[y] + N[z]+P[z] + d) / (N[x]*Dir[x] + N[y]*Dir[y] + N[z]*Dir[z]);
+    // alpha => calcul de I
+    //on remplace t dans l'équation du rayon pour trouver l'intersection I
+    Vec3 I = Vec3(P[x]+Dir[x]*t, P[y]+Dir[y]*t, P[z]+Dir[z]*t);
 
 	// I dans le quad ?
+    is_points_in_quad(I, p0, p1, p2, p3);
 
     return false;
 }
