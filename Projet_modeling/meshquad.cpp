@@ -112,19 +112,29 @@ void MeshQuad::create_cube()
 
 	// ajouter 8 sommets (-1 +1)
 
-    int axeY = add_vertex(Vec3(0, 5, 0));
-    int axeZ = add_vertex(Vec3(0, 0, 5));
-    int axeX = add_vertex(Vec3(5, 0, 0));
+//    int axeY = add_vertex(Vec3(-1, 5, -1));
+//    int axeZ = add_vertex(Vec3(-1, -1, 5));
+//    int axeX = add_vertex(Vec3(5, -1, -1));
 
-    int p0 = add_vertex(Vec3(0, 0, 0));
-    int p1 = add_vertex(Vec3(1, 0, 0));
-    int p2 = add_vertex(Vec3(1, 0, 1));
-    int p3 = add_vertex(Vec3(0, 0, 1));
+//    int p0 = add_vertex(Vec3(0, 0, 0));
+//    int p1 = add_vertex(Vec3(1, 0, 0));
+//    int p2 = add_vertex(Vec3(1, 0, 1));
+//    int p3 = add_vertex(Vec3(0, 0, 1));
 
-    int ph0 = add_vertex(Vec3(0, 1, 0));
-    int ph1 = add_vertex(Vec3(1, 1, 0));
+    int p0 = add_vertex(Vec3(-1, -1, -1));
+    int p1 = add_vertex(Vec3(1, -1, -1));
+    int p2 = add_vertex(Vec3(1, -1, 1));
+    int p3 = add_vertex(Vec3(-1, -1, 1));
+
+//    int ph0 = add_vertex(Vec3(0, 1, 0));
+//    int ph1 = add_vertex(Vec3(1, 1, 0));
+//    int ph2 = add_vertex(Vec3(1, 1, 1));
+//    int ph3 = add_vertex(Vec3(0, 1, 1));
+
+    int ph0 = add_vertex(Vec3(-1, 1, -1));
+    int ph1 = add_vertex(Vec3(1, 1, -1));
     int ph2 = add_vertex(Vec3(1, 1, 1));
-    int ph3 = add_vertex(Vec3(0, 1, 1));
+    int ph3 = add_vertex(Vec3(-1, 1, 1));
 
     // ajouter 6 faces (sens trigo pour chacune) ??
 
@@ -141,9 +151,9 @@ void MeshQuad::create_cube()
     add_quad(ph1, ph2, p2, p1);
 
     //repère
-    add_quad(p0, axeY, axeY, p0);
-    add_quad(p0, axeZ, axeZ, p0);
-    add_quad(p0, axeX, axeX, p0);
+//    add_quad(p0, axeY, axeY, p0);
+//    add_quad(p0, axeZ, axeZ, p0);
+//    add_quad(p0, axeX, axeX, p0);
 
 
 	gl_update();
@@ -227,9 +237,11 @@ bool MeshQuad::intersect_ray_quad(const Vec3& P, const Vec3& Dir, int q, Vec3& i
 
     //deux vecteurs directeurs du plan
     Vec3 v = p1 - p0;
-    Vec3 u = p3 - p2;
+    Vec3 u = p3 - p0;
+
     //normale = leur produit vectoriel
     Vec3 N = glm::cross(u, v);
+
     //on calcule d en remplaçant x, y et z par les coordonnées de p0, qui appartient au plan
     int d = N[x]*p0[x] + N[y]*p0[y] + N[z]*p0[z];
 
@@ -238,11 +250,12 @@ bool MeshQuad::intersect_ray_quad(const Vec3& P, const Vec3& Dir, int q, Vec3& i
     // I = P + alpha*Dir est dans le plan => calcul de alpha
     // on remplace x, y, z dans l'équation du plan par les coordonnées paramétriques du rayon, ce qui nous donne t
     int t = -(N[x]*P[x] + N[y]+P[y] + N[z]+P[z] + d) / (N[x]*Dir[x] + N[y]*Dir[y] + N[z]*Dir[z]);
+
     // alpha => calcul de I
     //on remplace t dans l'équation du rayon pour trouver l'intersection I
     Vec3 I = Vec3(P[x]+Dir[x]*t, P[y]+Dir[y]*t, P[z]+Dir[z]*t);
 
-	// I dans le quad ?
+    // I dans le quad ?
 
     if(is_points_in_quad(I, p0, p1, p2, p3)) {
         inter = I;
@@ -260,6 +273,16 @@ int MeshQuad::intersected_closest(const Vec3& P, const Vec3& Dir)
 	// on garde le plus proche (de P)
 
     int inter = -1;
+    Vec3 interVec;
+
+    for(int i=0; i<m_quad_indices.size(); i+=4) {
+        if(intersect_ray_quad(P, Dir, i, interVec)) {
+            std::cout << "INTERSECTION quad " << i << " en " << interVec << std::endl;
+
+            int length = glm::length(interVec - P);
+            std::cout << "length: " << std::endl;
+        }
+    }
 
 	return inter;
 }
@@ -269,20 +292,34 @@ Mat4 MeshQuad::local_frame(int q)
 {
 	// Repere locale = Matrice de transfo avec
 	// les trois premieres colones: X,Y,Z locaux
-	// la derniere colonne l'origine du repere
+    // la derniere colonne l'origine du repere
 
 	// ici Z = N et X = AB
 	// Origine le centre de la face
 	// longueur des axes : [AB]/2
 
-	// recuperation des indices de points
-	// recuperation des points
+    // recuperation des indices de points
+    int i0 = m_quad_indices[q];
+    int i1 = m_quad_indices[q+1];
+    int i2 = m_quad_indices[q+2];
+    int i3 = m_quad_indices[q+3];
+    // recuperation des points
+    Vec3 p0 = m_points[i0];
+    Vec3 p1 = m_points[i1];
+    Vec3 p2 = m_points[i2];
+    Vec3 p3 = m_points[i3];
 
-	// calcul de Z:N / X:AB -> Y
+    // calcul de Z:N / X:AB -> Y
+    Vec3 X = p1 - p0;
+    Vec3 Y = p3 - p0;
+    Vec3 Z = glm::cross(X, Y);
 
 	// calcul du centre
+    Vec3 diag = p2 - p0;
+    Vec3 C = Vec3(diag[0]/2, diag[1]/2, diag[2]/2);
 
 	// calcul de la taille
+    int length = glm::length(X)/2;
 
 	// calcul de la matrice
 
