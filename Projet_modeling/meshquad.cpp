@@ -100,6 +100,9 @@ void MeshQuad::bounding_sphere(Vec3& C, float& R)
 
     C = Vec3(max_x/2, max_y/2, max_z/2);
     R = max_r;
+
+    std::cout << "C: " << C << std::endl;
+    std::cout << "R: " << R << std::endl;
 }
 
 //SENS TRIGO ?
@@ -203,15 +206,6 @@ bool MeshQuad::is_points_in_quad(const Vec3& P, const Vec3& A, const Vec3& B, co
 //PAS TESTE
 bool MeshQuad::intersect_ray_quad(const Vec3& P, const Vec3& Dir, int q, Vec3& inter)
 {
-    /**
-     * @brief calcul l'intersection entre un rayon et un quad
-     * @param P point de depart du rayon
-     * @param Dir direction du rayon
-     * @param q numero du quad
-     * @param inter intersection calculee [out]
-     * @return l'intersection est dans le quad
-     */
-
     int x = 0;
     int y = 1;
     int z = 2;
@@ -247,7 +241,11 @@ bool MeshQuad::intersect_ray_quad(const Vec3& P, const Vec3& Dir, int q, Vec3& i
     Vec3 I = Vec3(P[x]+Dir[x]*t, P[y]+Dir[y]*t, P[z]+Dir[z]*t);
 
 	// I dans le quad ?
-    is_points_in_quad(I, p0, p1, p2, p3);
+
+    if(is_points_in_quad(I, p0, p1, p2, p3)) {
+        inter = I;
+        return true;
+    }
 
     return false;
 }
@@ -259,7 +257,7 @@ int MeshQuad::intersected_closest(const Vec3& P, const Vec3& Dir)
 	// on teste si il y a intersection avec le rayon
 	// on garde le plus proche (de P)
 
-	int inter = -1;
+    int inter = -1;
 
 	return inter;
 }
