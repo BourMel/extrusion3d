@@ -110,26 +110,12 @@ void MeshQuad::create_cube()
 {
 	clear();
 
-	// ajouter 8 sommets (-1 +1)
-
-//    int axeY = add_vertex(Vec3(-1, 5, -1));
-//    int axeZ = add_vertex(Vec3(-1, -1, 5));
-//    int axeX = add_vertex(Vec3(5, -1, -1));
-
-//    int p0 = add_vertex(Vec3(0, 0, 0));
-//    int p1 = add_vertex(Vec3(1, 0, 0));
-//    int p2 = add_vertex(Vec3(1, 0, 1));
-//    int p3 = add_vertex(Vec3(0, 0, 1));
+    // ajouter 8 sommets (-1 +1)
 
     int p0 = add_vertex(Vec3(-1, -1, -1));
     int p1 = add_vertex(Vec3(1, -1, -1));
     int p2 = add_vertex(Vec3(1, -1, 1));
     int p3 = add_vertex(Vec3(-1, -1, 1));
-
-//    int ph0 = add_vertex(Vec3(0, 1, 0));
-//    int ph1 = add_vertex(Vec3(1, 1, 0));
-//    int ph2 = add_vertex(Vec3(1, 1, 1));
-//    int ph3 = add_vertex(Vec3(0, 1, 1));
 
     int ph0 = add_vertex(Vec3(-1, 1, -1));
     int ph1 = add_vertex(Vec3(1, 1, -1));
@@ -150,12 +136,6 @@ void MeshQuad::create_cube()
     add_quad(p0, p3, ph3, ph0);
     add_quad(ph1, ph2, p2, p1);
 
-    //repère
-//    add_quad(p0, axeY, axeY, p0);
-//    add_quad(p0, axeZ, axeZ, p0);
-//    add_quad(p0, axeX, axeX, p0);
-
-
 	gl_update();
 }
 
@@ -166,7 +146,10 @@ Vec3 MeshQuad::normal_of(const Vec3& A, const Vec3& B, const Vec3& C)
 	// le produit vectoriel n'est pas commutatif U ^ V = - V ^ U
 	// ne pas oublier de normaliser le resultat.
 
-    return Vec3(glm::normalize(glm::cross(A,B)));
+    Vec3 AB = Vec3(B[0]-A[0], B[1]-A[1], B[2]-A[2]);
+    Vec3 AC = Vec3(C[0]-A[0], C[1]-A[1], C[2]-A[2]);
+
+    return Vec3(glm::normalize(glm::cross(AB,AC)));
 }
 
 //PAS TESTE, pas utilisé
