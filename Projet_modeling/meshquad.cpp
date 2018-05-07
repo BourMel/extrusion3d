@@ -220,23 +220,21 @@ bool MeshQuad::intersect_ray_quad(const Vec3& P, const Vec3& Dir, int q, Vec3& i
     Vec3 p2 = m_points[i2];
     Vec3 p3 = m_points[i3];
 
-	// calcul de l'equation du plan (N+d)
-
-    //deux vecteurs directeurs du plan
-    Vec3 v = p1 - p0;
-    Vec3 u = p3 - p0;
-
-    //normale = leur produit vectoriel
-    Vec3 N = glm::cross(u, v);
+    // calcul de l'equation du plan (N+d)
+    Vec3 N = normal_of(p0, p1, p2);
 
     //on calcule d en remplaçant x, y et z par les coordonnées de p0, qui appartient au plan
-    int d = N[x]*p0[x] + N[y]*p0[y] + N[z]*p0[z];
+    float d = N[x]*p0[x] + N[y]*p0[y] + N[z]*p0[z];
 
     // calcul de l'intersection rayon plan
 
     // I = P + alpha*Dir est dans le plan => calcul de alpha
     // on remplace x, y, z dans l'équation du plan par les coordonnées paramétriques du rayon, ce qui nous donne t
-    int t = -(N[x]*P[x] + N[y]+P[y] + N[z]+P[z] + d) / (N[x]*Dir[x] + N[y]*Dir[y] + N[z]*Dir[z]);
+
+    float t = -(N[x]*P[x] + N[y]+P[y] + N[z]+P[z] + d) / (N[x]*Dir[x] + N[y]*Dir[y] + N[z]*Dir[z]);
+
+
+    if(t == INFINITY) return false;
 
     // alpha => calcul de I
     //on remplace t dans l'équation du rayon pour trouver l'intersection I
@@ -260,18 +258,44 @@ int MeshQuad::intersected_closest(const Vec3& P, const Vec3& Dir)
 	// on garde le plus proche (de P)
 
     int inter = -1;
-    Vec3 interVec;
+    Vec3 interPt;
+    Vec3 interPtKept;
+
+    Vec3 distanceVec;
+    float distance;
 
     for(int i=0; i<m_quad_indices.size(); i+=4) {
-        if(intersect_ray_quad(P, Dir, i, interVec)) {
-            std::cout << "INTERSECTION quad " << i << " en " << interVec << std::endl;
+        if(intersect_ray_quad(P, Dir, i, interPt)) {
 
-            int length = glm::length(interVec - P);
-            std::cout << "length: " << std::endl;
+            std::cout << "intersection" << std::endl;
+
+            if(inter == -1) {
+                inter = i;
+                distanceVec = P - interPt;
+                distance = glm::length(distanceVec);
+                interPtKept = interPt;
+
+            std::cout << "inter == -1 d'où " << inter << " avec distance " << distance << std::endl;
+
+            } else {
+
+                distanceVec = P - interPt;
+
+                if(abs(distance) > abs(glm::length(distanceVec))) {
+
+                    inter  = i;
+                    distance = glm::length(distanceVec);
+                    interPtKept = interPt;
+                }
+
+                std::cout << inter << " avec distance " << distance << std::endl;
+            }
+        } else {
+            std::cout << "pas d'intersection" << std::endl;
         }
     }
 
-	return inter;
+    return inter;
 }
 
 
