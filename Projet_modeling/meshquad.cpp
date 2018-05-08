@@ -266,31 +266,22 @@ int MeshQuad::intersected_closest(const Vec3& P, const Vec3& Dir)
     for(int i=0; i<m_quad_indices.size(); i+=4) {
         if(intersect_ray_quad(P, Dir, i, interPt)) {
 
-            std::cout << "intersection" << std::endl;
-
             if(inter == -1) {
                 inter = i;
                 distanceVec = P - interPt;
                 distance = glm::length(distanceVec);
                 interPtKept = interPt;
 
-            std::cout << "inter == -1 d'où " << inter << " avec distance " << distance << std::endl;
-
             } else {
 
                 distanceVec = P - interPt;
 
                 if(abs(distance) > abs(glm::length(distanceVec))) {
-
                     inter  = i;
                     distance = glm::length(distanceVec);
                     interPtKept = interPt;
                 }
-
-                std::cout << inter << " avec distance " << distance << std::endl;
             }
-        } else {
-            std::cout << "pas d'intersection" << std::endl;
         }
     }
 
@@ -314,26 +305,31 @@ Mat4 MeshQuad::local_frame(int q)
     int i2 = m_quad_indices[q+2];
     int i3 = m_quad_indices[q+3];
     // recuperation des points
-    Vec3 p0 = m_points[i0];
-    Vec3 p1 = m_points[i1];
-    Vec3 p2 = m_points[i2];
-    Vec3 p3 = m_points[i3];
+    Vec3 A = m_points[i0];
+    Vec3 B = m_points[i1];
+    Vec3 C = m_points[i2];
+    Vec3 D = m_points[i3];
 
     // calcul de Z:N / X:AB -> Y
-    Vec3 X = p1 - p0;
-    Vec3 Y = p3 - p0;
-    Vec3 Z = glm::cross(X, Y);
+
+    Vec3 Z = glm::normalize(normal_of(A, B, C));
+    Vec3 X = glm::normalize(B - A);
+    Vec3 Y = glm::normalize(glm::cross(X, Z));
 
 	// calcul du centre
-    Vec3 diag = p2 - p0;
-    Vec3 C = Vec3(diag[0]/2, diag[1]/2, diag[2]/2);
+    Vec3 c = A + B + C + D;
+    c *= 0.25; //divisé par 4
 
 	// calcul de la taille
-    int length = glm::length(X)/2;
+    int length = glm::length(B - A)/2;
 
 	// calcul de la matrice
 
-    return Mat4();
+    return Mat4(
+                Vec4(X[0], X[1], X[2], 0.0),
+                Vec4(Y[0], Y[1], Y[2], 0.0),
+                Vec4(Z[0], Z[1], Z[2], 0.0),
+                Vec4(c[0], c[1], c[2], 1.0))*scale(length);
 }
 
 void MeshQuad::extrude_quad(int q)

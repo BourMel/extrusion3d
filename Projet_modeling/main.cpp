@@ -19,6 +19,30 @@ const Vec3 NOIR    = {0,0,0};
 
 void draw_repere(const Primitives& prim, const Mat4& tr)
 {
+    Mat4 scaledTr = tr*scale(0.5)*translate(0, 0, 0.5);
+
+    prim.draw_sphere(scaledTr, BLANC);
+
+    prim.draw_cylinder(
+                scaledTr*translate(0, 0, 1)*scale(0.5, 0.5, 1),
+                BLEU);
+    prim.draw_cone(
+                scaledTr*translate(0, 0, 2),
+                BLEU);
+
+    prim.draw_cylinder(
+                scaledTr*rotateX(90)*translate(0, 0, 1)*scale(0.5, 0.5, 1),
+                VERT);
+    prim.draw_cone(
+                scaledTr*rotateX(90)*translate(0, 0, 2),
+                VERT);
+
+    prim.draw_cylinder(
+                scaledTr*rotateY(90)*translate(0, 0, 1)*scale(0.5, 0.5, 1),
+                ROUGE);
+    prim.draw_cone(
+                scaledTr*rotateY(90)*translate(0, 0, 2),
+                ROUGE);
 }
 
 
@@ -36,7 +60,7 @@ void star(MeshQuad& m)
 int main(int argc, char *argv[])
 {
 	Primitives prim;
-	int selected_quad = -1;
+    int selected_quad = -1;
 	glm::mat4 selected_frame;
 	MeshQuad mesh;
 
