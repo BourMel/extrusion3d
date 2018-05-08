@@ -97,8 +97,10 @@ int main(int argc, char *argv[])
 				if (!(mod & Qt::ControlModifier))
 					mesh.create_cube();
 				break;
+            case Qt::Key_E:
+                    mesh.extrude_quad(selected_quad);
+                break;
 
-			// e extrusion
 			// +/- decale
 			// z/Z shrink
 			// t/T tourne

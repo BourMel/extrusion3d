@@ -152,6 +152,30 @@ Vec3 MeshQuad::normal_of(const Vec3& A, const Vec3& B, const Vec3& C)
     return Vec3(glm::normalize(glm::cross(AB,AC)));
 }
 
+float MeshQuad::area_of_quad(const int q) {
+
+    // recuperation des indices de points
+    int i0 = m_quad_indices[q];
+    int i1 = m_quad_indices[q+1];
+    int i2 = m_quad_indices[q+2];
+    int i3 = m_quad_indices[q+3];
+    // recuperation des points
+    Vec3 A = m_points[i0];
+    Vec3 B = m_points[i1];
+    Vec3 C = m_points[i2];
+    Vec3 D = m_points[i3];
+
+    Vec3 AB = B-A;
+    Vec3 AC = C-A;
+
+    //aire = ||AB^AC||/2
+
+    Vec3 cross = glm::cross(AB, AC);
+    float area = glm::length(cross)/2;
+
+    return area;
+}
+
 //PAS TESTE, pas utilisé
 bool MeshQuad::is_points_in_quad(const Vec3& P, const Vec3& A, const Vec3& B, const Vec3& C, const Vec3& D)
 {
@@ -334,19 +358,40 @@ Mat4 MeshQuad::local_frame(int q)
 
 void MeshQuad::extrude_quad(int q)
 {
-	// recuperation des indices de points
-
-	// recuperation des points
+    // recuperation des indices de points
+    int i0 = m_quad_indices[q];
+    int i1 = m_quad_indices[q+1];
+    int i2 = m_quad_indices[q+2];
+    int i3 = m_quad_indices[q+3];
+    // recuperation des points
+    Vec3 A = m_points[i0];
+    Vec3 B = m_points[i1];
+    Vec3 C = m_points[i2];
+    Vec3 D = m_points[i3];
 
 	// calcul de la normale
+    Vec3 N = normal_of(A, B, C);
 
-	// calcul de la hauteur
+    // calcul de la hauteur = racine carrée de l'aire
+    float height = sqrt(area_of_quad(q));
 
 	// calcul et ajout des 4 nouveaux points
+    int iA = add_vertex(A + N*height);
+    int iB = add_vertex(B + N*height);
+    int iC = add_vertex(C + N*height);
+    int iD = add_vertex(D + N*height);
 
-	// on remplace le quad initial par le quad du dessu
+    // on remplace le quad initial par le quad du dessus
+    m_quad_indices[q] = iA;
+    m_quad_indices[q+1] = iB;
+    m_quad_indices[q+2] = iC;
+    m_quad_indices[q+3] = iD;
 
 	// on ajoute les 4 quads des cotes
+    add_quad(i0, i3, iD, iA);
+    add_quad(i1, i0, i1, iB);
+    add_quad(i3, i2, iC, iD);
+    add_quad(i1, i2, iC, iB);
 
    gl_update();
 }

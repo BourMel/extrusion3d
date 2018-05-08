@@ -80,6 +80,13 @@ public:
 	 */
 	Vec3 normal_of(const Vec3& A, const Vec3& B, const Vec3& C);
 
+    /**
+     * @brief calcule l'aire d'un quad
+     * @param q
+     * @return l'aire du quad
+     */
+    float area_of_quad(const int q);
+
 	/**
 	 * @brief Determine si P est dans le quad A,B,C,D (P considéré ~ dans le plan ABCD)
 	 * @param P
