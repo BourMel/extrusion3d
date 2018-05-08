@@ -172,29 +172,29 @@ bool MeshQuad::is_points_in_quad(const Vec3& P, const Vec3& A, const Vec3& B, co
     Vec3 normale = normal_of(A, B, C);
 
     //plan n°1 : normale puis déterminant
-    Vec3 normale1 = glm::cross(AB, normale);
+    Vec3 normale1 = glm::cross(normale, AB);
     float d1 = normale1[x]*A[x] + normale1[y]*A[y] + normale1[z]*A[z];
     float res1 = normale1[x]*P[x] + normale1[y]*P[y] + normale1[z]*P[z] - d1;
 
     if(res1 < 0) return false;
 
     //plan n°2
-    Vec3 normale2 = glm::cross(BC, normale);
-    float d2 = normale1[x]*B[x] + normale1[y]*B[y] + normale1[z]*B[z];
+    Vec3 normale2 = glm::cross(normale, BC);
+    float d2 = normale2[x]*B[x] + normale2[y]*B[y] + normale2[z]*B[z];
     float res2 = normale2[x]*P[x] + normale2[y]*P[y] + normale2[z]*P[z] - d2;
 
     if(res2 < 0) return false;
 
     //plan n°3
-    Vec3 normale3 = glm::cross(CD, normale);
-    float d3 = normale1[x]*C[x] + normale1[y]*C[y] + normale1[z]*C[z];
+    Vec3 normale3 = glm::cross(normale, CD);
+    float d3 = normale3[x]*C[x] + normale3[y]*C[y] + normale3[z]*C[z];
     float res3 = normale3[x]*P[x] + normale3[y]*P[y] + normale3[z]*P[z] - d3;
 
     if(res3 < 0) return false;
 
     //plan n°4
-    Vec3 normale4 = glm::cross(DA, normale);
-    float d4 = normale1[x]*D[x] + normale1[y]*D[y] + normale1[z]*D[z];
+    Vec3 normale4 = glm::cross(normale, DA);
+    float d4 = normale4[x]*D[x] + normale4[y]*D[y] + normale4[z]*D[z];
     float res4 = normale4[x]*P[x] + normale4[y]*P[y] + normale4[z]*P[z] - d4;
 
     if(res4 < 0) return false;
@@ -231,8 +231,7 @@ bool MeshQuad::intersect_ray_quad(const Vec3& P, const Vec3& Dir, int q, Vec3& i
     // I = P + alpha*Dir est dans le plan => calcul de alpha
     // on remplace x, y, z dans l'équation du plan par les coordonnées paramétriques du rayon, ce qui nous donne t
 
-    float t = -(N[x]*P[x] + N[y]+P[y] + N[z]+P[z] + d) / (N[x]*Dir[x] + N[y]*Dir[y] + N[z]*Dir[z]);
-
+    float t = (d - glm::dot(P, N)) / (glm::dot(Dir, N));
 
     if(t == INFINITY) return false;
 
