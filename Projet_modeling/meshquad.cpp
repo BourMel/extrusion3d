@@ -403,13 +403,34 @@ void MeshQuad::extrude_quad(int q)
 
 void MeshQuad::transfo_quad(int q, const glm::mat4& tr)
 {
-	// recuperation des indices de points
-	// recuperation des (references de) points
+    // recuperation des indices de points
+    int i0 = m_quad_indices[q];
+    int i1 = m_quad_indices[q+1];
+    int i2 = m_quad_indices[q+2];
+    int i3 = m_quad_indices[q+3];
+    // recuperation des (references de) points
+    Vec3& A = m_points[i0];
+    Vec3& B = m_points[i1];
+    Vec3& C = m_points[i2];
+    Vec3& D = m_points[i3];
 
 	// generation de la matrice de transfo globale:
 	// indice utilisation de glm::inverse() et de local_frame
 
+    // déplacement du point à l'origine, transfo puis retour à l'état précédent
+    Mat4 position = local_frame(q);
+    Mat4 transformation = position*tr*glm::inverse(position);
+
 	// Application au 4 points du quad
+    Vec4 A_hom = transformation*Vec4(A[0], A[1], A[2], 0);
+    Vec4 B_hom = transformation*Vec4(B[0], B[1], B[2], 0);
+    Vec4 C_hom = transformation*Vec4(C[0], C[1], C[2], 0);
+    Vec4 D_hom = transformation*Vec4(D[0], D[1], D[2], 1);
+
+    A = Vec3(A_hom);
+    B = Vec3(B_hom);
+    C = Vec3(C_hom);
+    D = Vec3(D_hom);
 }
 
 void MeshQuad::decale_quad(int q, float d)
