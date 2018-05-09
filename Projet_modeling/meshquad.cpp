@@ -125,16 +125,16 @@ void MeshQuad::create_cube()
     // ajouter 6 faces (sens trigo pour chacune) ??
 
     //dessus et dessous
+    add_quad(ph0, ph3, ph2, ph1);
     add_quad(p0, p1, p2, p3);
-    add_quad(ph3, ph2, ph1, ph0);
 
     //avant et arrière
-    add_quad(p0, ph0, ph1, p1);
-    add_quad(p2, ph2, ph3, p3);
+     add_quad(p2, ph2, ph3, p3);
+     add_quad(ph0, ph1, p1, p0);
 
     //gauche et droite
-    add_quad(p0, p3, ph3, ph0);
-    add_quad(ph1, ph2, p2, p1);
+     add_quad(p3, ph3, ph0, p0);
+     add_quad(ph1, ph2, p2, p1);
 
 	gl_update();
 }
@@ -376,22 +376,25 @@ void MeshQuad::extrude_quad(int q)
     float height = sqrt(area_of_quad(q));
 
 	// calcul et ajout des 4 nouveaux points
-    int iA = add_vertex(A + N*height);
-    int iB = add_vertex(B + N*height);
-    int iC = add_vertex(C + N*height);
-    int iD = add_vertex(D + N*height);
+    int ih0 = add_vertex(A + N*height);
+    int ih1 = add_vertex(B + N*height);
+    int ih2 = add_vertex(C + N*height);
+    int ih3 = add_vertex(D + N*height);
 
     // on remplace le quad initial par le quad du dessus
-    m_quad_indices[q] = iA;
-    m_quad_indices[q+1] = iB;
-    m_quad_indices[q+2] = iC;
-    m_quad_indices[q+3] = iD;
+    m_quad_indices[q] = ih0;
+    m_quad_indices[q+1] = ih1;
+    m_quad_indices[q+2] = ih2;
+    m_quad_indices[q+3] = ih3;
 
-	// on ajoute les 4 quads des cotes
-    add_quad(i0, i3, iD, iA);
-    add_quad(i1, i0, i1, iB);
-    add_quad(i3, i2, iC, iD);
-    add_quad(i1, i2, iC, iB);
+    // on ajoute les 4 quads des cotes
+    //avant et arrière
+     add_quad(i3, ih3, ih2, i2);
+     add_quad(i0, i1, ih1, ih0);
+
+    //gauche et droite
+     add_quad(i0, ih0, ih3, i3);
+     add_quad(i1, i2, ih2, ih1);
 
    gl_update();
 }
