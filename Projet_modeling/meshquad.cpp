@@ -68,7 +68,6 @@ void MeshQuad::convert_quads_to_edges(const std::vector<int>& quads, std::vector
     }
 }
 
-//PAS TESTE
 void MeshQuad::bounding_sphere(Vec3& C, float& R)
 {
     //pour la lisibilité
@@ -105,7 +104,6 @@ void MeshQuad::bounding_sphere(Vec3& C, float& R)
     std::cout << "R: " << R << std::endl;
 }
 
-//SENS TRIGO ?
 void MeshQuad::create_cube()
 {
 	clear();
@@ -122,7 +120,7 @@ void MeshQuad::create_cube()
     int ph2 = add_vertex(Vec3(1, 1, 1));
     int ph3 = add_vertex(Vec3(-1, 1, 1));
 
-    // ajouter 6 faces (sens trigo pour chacune) ??
+    // ajouter 6 faces (sens trigo pour chacune)
 
     //dessus et dessous
     add_quad(ph0, ph3, ph2, ph1);
@@ -139,7 +137,6 @@ void MeshQuad::create_cube()
 	gl_update();
 }
 
-//PAS TESTE, pas utilisé
 Vec3 MeshQuad::normal_of(const Vec3& A, const Vec3& B, const Vec3& C)
 {
 	// Attention a l'ordre des points !
@@ -165,18 +162,24 @@ float MeshQuad::area_of_quad(const int q) {
     Vec3 C = m_points[i2];
     Vec3 D = m_points[i3];
 
+    //triangle ABC
     Vec3 AB = B-A;
     Vec3 AC = C-A;
 
-    //aire = ||AB^AC||/2
+    //triangle CDA
+    Vec3 DC = C-D;
+    Vec3 DA = A-D;
 
-    Vec3 cross = glm::cross(AB, AC);
-    float area = glm::length(cross)/2;
+    //aire d'un triangle = ||AB^AC||/2
+    Vec3 crossABC = glm::cross(AB, AC);
+    float areaABC = glm::length(crossABC)/2;
 
-    return area;
+    Vec3 crossCDA = glm::cross(DC, DA);
+    float areaCDA = glm::length(crossCDA)/2;
+
+    return areaABC + areaCDA;
 }
 
-//PAS TESTE, pas utilisé
 bool MeshQuad::is_points_in_quad(const Vec3& P, const Vec3& A, const Vec3& B, const Vec3& C, const Vec3& D)
 {
 	// On sait que P est dans le plan du quad.
@@ -226,7 +229,6 @@ bool MeshQuad::is_points_in_quad(const Vec3& P, const Vec3& A, const Vec3& B, co
     return true;
 }
 
-//PAS TESTE
 bool MeshQuad::intersect_ray_quad(const Vec3& P, const Vec3& Dir, int q, Vec3& inter)
 {
     int x = 0;
