@@ -434,7 +434,8 @@ void MeshQuad::transfo_quad(int q, const glm::mat4& tr)
 
 void MeshQuad::decale_quad(int q, float d)
 {
-
+    Mat4 transfo = Mat4()*translate(d, d, d);
+    transfo_quad(q, transfo);
 }
 
 void MeshQuad::shrink_quad(int q, float s)
@@ -445,12 +446,9 @@ void MeshQuad::shrink_quad(int q, float s)
 
 void MeshQuad::tourne_quad(int q, float a)
 {
-
+    Mat4 transfo = Mat4()*rotateZ(a);
+    transfo_quad(q, transfo);
 }
-
-
-
-
 
 MeshQuad::MeshQuad():
 	m_nb_ind_edges(0)

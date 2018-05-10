@@ -97,12 +97,35 @@ int main(int argc, char *argv[])
 				if (!(mod & Qt::ControlModifier))
 					mesh.create_cube();
 				break;
+
             case Qt::Key_E:
-                    mesh.extrude_quad(selected_quad);
+                mesh.extrude_quad(selected_quad);
                 break;
 
-			// +/- decale
-			// z/Z shrink
+            case Qt::Key_Z:
+                if(mod && Qt::Key_Shift) {
+                    mesh.shrink_quad(selected_quad, 1.1);
+                } else {
+                    mesh.shrink_quad(selected_quad, 0.9);
+                }
+                break;
+
+            case Qt::Key_T:
+                if(mod && Qt::Key_Shift) {
+                    mesh.tourne_quad(selected_quad, 1);
+                } else {
+                    mesh.tourne_quad(selected_quad, -1);
+                }
+                break;
+
+            case Qt::Key_Plus:
+                mesh.decale_quad(selected_quad, 0.5);
+                break;
+            case Qt::Key_Minus:
+                mesh.decale_quad(selected_quad, -0.5);
+                break;
+
+            // +/- decale
 			// t/T tourne
 
 			// Attention au cas m_selected_quad == -1
