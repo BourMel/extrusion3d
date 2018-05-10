@@ -32,7 +32,7 @@ void MeshQuad::convert_quads_to_tris(const std::vector<int>& quads, std::vector<
 	// Attention a repecter l'orientation des triangles
 
     //tester multiple de 4 ?
-    for(int i=0; i<quads.size(); i+=4) {
+    for(unsigned int i=0; i<quads.size(); i+=4) {
         tris.push_back(quads[i]);
         tris.push_back(quads[i+1]);
         tris.push_back(quads[i+2]);
@@ -53,7 +53,7 @@ void MeshQuad::convert_quads_to_edges(const std::vector<int>& quads, std::vector
 	// Comment n'avoir qu'une seule fois chaque arete ?
 
     //ici : toutes les arêtes implémentées (donc présence de doubles)
-    for(int i=0; i<quads.size(); i+=4) {
+    for(unsigned int i=0; i<quads.size(); i+=4) {
         edges.push_back(quads[i]);
         edges.push_back(quads[i+1]);
 
@@ -80,7 +80,7 @@ void MeshQuad::bounding_sphere(Vec3& C, float& R)
     int max_z = 0;
     int max_r = 0;
 
-    for(int i=0; i<m_points.size(); i++) {
+    for(unsigned int i=0; i<m_points.size(); i++) {
         if(m_points[i][x] > max_x) {
             max_x = m_points[i][x];
         }
@@ -99,9 +99,6 @@ void MeshQuad::bounding_sphere(Vec3& C, float& R)
 
     C = Vec3(max_x/2, max_y/2, max_z/2);
     R = max_r;
-
-    std::cout << "C: " << C << std::endl;
-    std::cout << "R: " << R << std::endl;
 }
 
 void MeshQuad::create_cube()
@@ -289,7 +286,7 @@ int MeshQuad::intersected_closest(const Vec3& P, const Vec3& Dir)
     Vec3 distanceVec;
     float distance;
 
-    for(int i=0; i<m_quad_indices.size(); i+=4) {
+    for(unsigned int i=0; i<m_quad_indices.size(); i+=4) {
         if(intersect_ray_quad(P, Dir, i, interPt)) {
 
             if(inter == -1) {
@@ -391,14 +388,14 @@ void MeshQuad::extrude_quad(int q)
 
     // on ajoute les 4 quads des cotes
     //avant et arrière
-     add_quad(i3, ih3, ih2, i2);
-     add_quad(i0, i1, ih1, ih0);
+    add_quad(i3, ih3, ih2, i2);
+    add_quad(i0, i1, ih1, ih0);
 
     //gauche et droite
-     add_quad(i0, ih0, ih3, i3);
-     add_quad(i1, i2, ih2, ih1);
+    add_quad(i0, ih0, ih3, i3);
+    add_quad(i1, i2, ih2, ih1);
 
-   gl_update();
+    gl_update();
 }
 
 void MeshQuad::transfo_quad(int q, const glm::mat4& tr)
@@ -425,12 +422,14 @@ void MeshQuad::transfo_quad(int q, const glm::mat4& tr)
     Vec4 A_hom = transformation*Vec4(A[0], A[1], A[2], 0);
     Vec4 B_hom = transformation*Vec4(B[0], B[1], B[2], 0);
     Vec4 C_hom = transformation*Vec4(C[0], C[1], C[2], 0);
-    Vec4 D_hom = transformation*Vec4(D[0], D[1], D[2], 1);
+    Vec4 D_hom = transformation*Vec4(D[0], D[1], D[2], 0);
 
     A = Vec3(A_hom);
     B = Vec3(B_hom);
     C = Vec3(C_hom);
     D = Vec3(D_hom);
+
+    gl_update();
 }
 
 void MeshQuad::decale_quad(int q, float d)
@@ -440,7 +439,8 @@ void MeshQuad::decale_quad(int q, float d)
 
 void MeshQuad::shrink_quad(int q, float s)
 {
-
+    Mat4 transfo = Mat4()*scale(s);
+    transfo_quad(q, transfo);
 }
 
 void MeshQuad::tourne_quad(int q, float a)
