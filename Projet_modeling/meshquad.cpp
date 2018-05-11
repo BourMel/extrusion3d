@@ -412,11 +412,18 @@ void MeshQuad::transfo_quad(int q, const glm::mat4& tr)
     Vec3& C = m_points[i2];
     Vec3& D = m_points[i3];
 
+    float determinant;
+    Mat4 position = local_frame(q);
+
 	// generation de la matrice de transfo globale:
 	// indice utilisation de glm::inverse() et de local_frame
 
+    //la matrice est inversible si son déterminant est différent de 0
+    determinant = glm::determinant(position);
+
+    if(determinant == 0) return;
+
     // déplacement du point à l'origine, transfo puis retour à l'état précédent
-    Mat4 position = local_frame(q);
     Mat4 transformation = position*tr*glm::inverse(position);
 
 	// Application au 4 points du quad
