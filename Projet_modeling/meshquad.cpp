@@ -70,35 +70,36 @@ void MeshQuad::convert_quads_to_edges(const std::vector<int>& quads, std::vector
 
 void MeshQuad::bounding_sphere(Vec3& C, float& R)
 {
-    //pour la lisibilité
-    int x = 0;
-    int y = 1;
-    int z = 2;
+    float max = 0;
+    Vec3 somme = Vec3(0, 0, 0);
+    int nb = m_points.size();
 
-    int max_x = 0;
-    int max_y = 0;
-    int max_z = 0;
-    int max_r = 0;
+    //moyenne de tous les points = centre
 
-    for(unsigned int i=0; i<m_points.size(); i++) {
-        if(m_points[i][x] > max_x) {
-            max_x = m_points[i][x];
+    for(unsigned int i=0; i<nb; i++) {
+
+        if(m_points[i][0] != m_points[i][0]) {
+            std::cerr << "ERROR : m_points[] contains coordonates which aren't numbers" << std::endl;
+            return;
         }
 
-        if(m_points[i][y] > max_y) {
-            max_y = m_points[i][y];
-        }
-
-        if(m_points[i][z] > max_z) {
-            max_z = m_points[i][z];
-        }
+        somme += m_points[i];
     }
 
-    max_r = std::max(max_x, max_y);
-    max_r = std::max(max_z, max_r);
+    C[0] = (somme[0] == 0) ? 0 : somme[0]/nb;
+    C[1] = (somme[1] == 0) ? 0 : somme[1]/nb;
+    C[2] = (somme[2] == 0) ? 0 : somme[2]/nb;
 
-    C = Vec3(max_x/2, max_y/2, max_z/2);
-    R = max_r;
+    //distance la plus grande de ce centre
+
+    for(unsigned int i=0; i<m_points.size(); i++) {
+
+        float distance = glm::length(m_points[i] - C);
+
+        if(distance > max) max = distance;
+    }
+
+    R = max;
 }
 
 void MeshQuad::create_cube()
