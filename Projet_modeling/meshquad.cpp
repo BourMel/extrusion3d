@@ -419,10 +419,10 @@ void MeshQuad::transfo_quad(int q, const glm::mat4& tr)
     Mat4 transformation = position*tr*glm::inverse(position);
 
 	// Application au 4 points du quad
-    Vec4 A_hom = transformation*Vec4(A[0], A[1], A[2], 0);
-    Vec4 B_hom = transformation*Vec4(B[0], B[1], B[2], 0);
-    Vec4 C_hom = transformation*Vec4(C[0], C[1], C[2], 0);
-    Vec4 D_hom = transformation*Vec4(D[0], D[1], D[2], 0);
+    Vec4 A_hom = transformation*Vec4(A[0], A[1], A[2], 1);
+    Vec4 B_hom = transformation*Vec4(B[0], B[1], B[2], 1);
+    Vec4 C_hom = transformation*Vec4(C[0], C[1], C[2], 1);
+    Vec4 D_hom = transformation*Vec4(D[0], D[1], D[2], 1);
 
     A = Vec3(A_hom);
     B = Vec3(B_hom);
@@ -434,19 +434,19 @@ void MeshQuad::transfo_quad(int q, const glm::mat4& tr)
 
 void MeshQuad::decale_quad(int q, float d)
 {
-    Mat4 transfo = Mat4()*translate(d, d, d);
+    Mat4 transfo = translate(0, 0, d);
     transfo_quad(q, transfo);
 }
 
 void MeshQuad::shrink_quad(int q, float s)
 {
-    Mat4 transfo = Mat4()*scale(s);
+    Mat4 transfo = scale(s);
     transfo_quad(q, transfo);
 }
 
 void MeshQuad::tourne_quad(int q, float a)
 {
-    Mat4 transfo = Mat4()*rotateZ(a);
+    Mat4 transfo = rotateZ(a);
     transfo_quad(q, transfo);
 }
 
