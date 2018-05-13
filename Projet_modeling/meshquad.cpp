@@ -401,6 +401,10 @@ void MeshQuad::extrude_quad(int q)
 
 void MeshQuad::transfo_quad(int q, const glm::mat4& tr)
 {
+    if(q < 0) return;
+    //vérifie que la face existe bien
+    if(q > floor(m_quad_indices.size())) return;
+
     // recuperation des indices de points
     int i0 = m_quad_indices[q];
     int i1 = m_quad_indices[q+1];

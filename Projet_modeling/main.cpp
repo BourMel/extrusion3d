@@ -94,12 +94,14 @@ int main(int argc, char *argv[])
 		switch(key)
 		{
 			case Qt::Key_C:
-				if (!(mod & Qt::ControlModifier))
+                if (!(mod & Qt::ControlModifier))
 					mesh.create_cube();
 				break;
 
             case Qt::Key_E:
-                mesh.extrude_quad(selected_quad);
+                if(selected_quad != -1) {
+                    mesh.extrude_quad(selected_quad);
+                }
                 break;
 
             case Qt::Key_Z:
@@ -124,11 +126,6 @@ int main(int argc, char *argv[])
             case Qt::Key_Minus:
                 mesh.decale_quad(selected_quad, -0.5);
                 break;
-
-            // +/- decale
-			// t/T tourne
-
-			// Attention au cas m_selected_quad == -1
 
 			// generation d'objet
 			case Qt::Key_S:
