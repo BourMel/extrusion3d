@@ -48,8 +48,29 @@ void draw_repere(const Primitives& prim, const Mat4& tr)
 
 void star(MeshQuad& m)
 {
-	m.create_cube();
-	// ...
+    unsigned int length = 10;
+    float rotate = 7;
+    float shrink = 0.9;
+    float maximise = 3;
+    float decale = -0.8;
+
+    m.create_cube();
+
+    //on agrandit le cube au préalable pour éviter des valeurs trop petites
+    for(unsigned int i=0; i<24; i+=4) {
+         m.shrink_quad(i, maximise);
+    }
+
+    //pour chaque face du cube initial
+    for(unsigned int i=0; i<24; i+=4) {
+        //en respectant la longueur indiquée
+        for(unsigned int l=0; l<length; l++) {
+            m.extrude_quad(i);
+            m.tourne_quad(i, rotate);
+            m.shrink_quad(i, shrink);
+            m.decale_quad(i, decale);
+        }
+    }
 }
 
 

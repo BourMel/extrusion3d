@@ -425,7 +425,11 @@ void MeshQuad::transfo_quad(int q, const glm::mat4& tr)
     //la matrice est inversible si son déterminant est différent de 0
     determinant = glm::determinant(position);
 
-    if(determinant == 0) return;
+    if(determinant == 0) {
+        std::cerr << "Transformation impossible sur q : " << q << std::endl;
+        std::cerr << tr << std::endl;
+        return;
+    }
 
     // déplacement du point à l'origine, transfo puis retour à l'état précédent
     Mat4 transformation = position*tr*glm::inverse(position);
